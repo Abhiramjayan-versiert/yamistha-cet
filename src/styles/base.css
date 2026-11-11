@@ -1,0 +1,445 @@
+/*
+ * YAMISHTA 2026 design tokens.
+ * Every colour below was sampled from the reference painting.
+ */
+:root {
+  --sky: #276a7f;          /* upper sky */
+  --sky-soft: #3f7586;     /* lower sky */
+  --teal: #1f4c5d;         /* the dark peak */
+  --night: #12343f;        /* deepest teal of the mountain shadows */
+  --night-2: #0d2831;
+  --roof: #355760;         /* pavilion roof tiles */
+  --cream: #fce2af;        /* the moon */
+  --cloud: #f0d3b0;        /* cloud highlights */
+  --paper: #f6e8cb;        /* cloud cream, lightened for reading */
+  --paper-2: #efdcb8;
+  --rose: #e9b3ae;         /* blossom highlights */
+  --pink: #cb827d;         /* blossom body */
+  --plum: #6f2429;         /* blossom shadow */
+  --lavender: #996f85;     /* far mountains */
+  --violet: #765879;
+  --red: #8b211e;          /* pavilion timber */
+  --red-deep: #6d1716;
+  --red-bright: #a83a30;
+  --wood: #3b2a2a;         /* trunk and beams */
+  --ink: #2c2325;
+
+  --display: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif;
+  --body: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', 'Segoe UI', system-ui, sans-serif;
+
+  --wrap: 1180px;
+  --gutter: clamp(18px, 4.4vw, 44px);
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+
+  /* brush lines, as in the painted sky */
+  --strokes-light: repeating-linear-gradient(0deg, rgba(252, 226, 175, 0.045) 0 1px, transparent 1px 5px);
+  --strokes-dark: repeating-linear-gradient(0deg, rgba(31, 76, 93, 0.06) 0 1px, transparent 1px 5px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+  -webkit-text-size-adjust: 100%;
+  background: var(--teal);
+}
+
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--paper);
+  background: var(--teal);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body.is-gated,
+body.menu-open,
+body.dialog-open {
+  overflow: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+dl,
+dd,
+ol,
+ul,
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+address {
+  font-style: normal;
+}
+
+code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 0.86em;
+  background: rgba(59, 42, 42, 0.1);
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.paper :focus-visible,
+.detail__panel :focus-visible {
+  outline-color: var(--red);
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--night-2);
+}
+
+.skip {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  transform: translateY(-200%);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+main,
+.footer {
+  position: relative;
+  z-index: 2;
+}
+
+.wrap {
+  width: 100%;
+  max-width: calc(var(--wrap) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: clamp(84px, 12vw, 170px);
+}
+
+/* ------------------------------------------------------------ buttons */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 12px 30px;
+  font-family: var(--body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.3;
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    background-color 0.35s var(--ease),
+    color 0.35s var(--ease),
+    border-color 0.35s var(--ease),
+    transform 0.35s var(--ease);
+}
+
+/* lacquered timber, with the thin inner line of the pavilion's panels */
+.btn--primary {
+  background: var(--red);
+  color: var(--cream);
+  border: 1px solid var(--red-deep);
+  box-shadow:
+    inset 0 0 0 3px var(--red),
+    inset 0 0 0 4px rgba(252, 226, 175, 0.5),
+    0 10px 24px -14px rgba(13, 40, 49, 0.9);
+}
+
+.btn--primary:hover {
+  background: var(--red-bright);
+  box-shadow:
+    inset 0 0 0 3px var(--red-bright),
+    inset 0 0 0 4px rgba(252, 226, 175, 0.75),
+    0 14px 26px -14px rgba(13, 40, 49, 0.9);
+  transform: translateY(-2px);
+}
+
+.btn--ghost {
+  color: var(--cream);
+  border: 1px solid rgba(252, 226, 175, 0.75);
+  background: rgba(18, 52, 63, 0.55);
+}
+
+.btn--ghost:hover {
+  background: var(--cream);
+  color: var(--night);
+  transform: translateY(-2px);
+}
+
+.btn--ink {
+  color: var(--wood);
+  border: 1px solid rgba(59, 42, 42, 0.55);
+}
+
+.btn--ink:hover {
+  background: var(--wood);
+  color: var(--paper);
+}
+
+.btn--pending,
+.btn--pending:hover {
+  cursor: default;
+  transform: none;
+  letter-spacing: 0.14em;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  border: 1px dashed currentColor;
+  opacity: 0.85;
+}
+
+/* ------------------------------------------------------------ placeholders */
+
+.pending {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 2px 9px 3px;
+  font-family: var(--body);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  color: var(--cream);
+  border: 1px dashed rgba(252, 226, 175, 0.7);
+  border-radius: 2px;
+}
+
+.paper .pending,
+.detail__panel .pending {
+  color: var(--red);
+  border-color: rgba(139, 33, 30, 0.6);
+}
+
+/* ------------------------------------------------------------ headings */
+
+.heading {
+  max-width: 760px;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.heading--center {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.heading__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--rose);
+}
+
+.heading__index {
+  font-family: var(--display);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--cream);
+}
+
+.heading__rule {
+  width: 44px;
+  height: 1px;
+  background: currentColor;
+}
+
+.heading__title {
+  margin-top: 16px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2rem, 4.6vw, 3.5rem);
+  line-height: 1.16;
+  letter-spacing: 0.01em;
+  color: var(--cream);
+  text-wrap: balance;
+}
+
+.heading__intro {
+  margin-top: 18px;
+  font-size: 1.05rem;
+  color: rgba(246, 232, 203, 0.92);
+  text-wrap: pretty;
+}
+
+.heading--dark .heading__label {
+  color: var(--red);
+}
+
+.heading--dark .heading__index,
+.heading--dark .heading__title {
+  color: var(--wood);
+}
+
+.heading--dark .heading__intro {
+  color: var(--ink);
+}
+
+/* headings that sit directly on the painting need a little night behind them */
+.section > .wrap > .heading .heading__title,
+.section > .wrap > .heading .heading__intro,
+.section > .wrap > .heading .heading__label {
+  text-shadow: 0 2px 18px rgba(13, 40, 49, 0.85), 0 0 2px rgba(13, 40, 49, 0.6);
+}
+
+/* ------------------------------------------------------------ surfaces */
+
+/* cloud-cream paper under a red lintel */
+.paper {
+  position: relative;
+  background: var(--strokes-dark), var(--paper);
+  color: var(--ink);
+  padding: clamp(28px, 4.6vw, 60px);
+  border: 1px solid rgba(59, 42, 42, 0.35);
+  border-top: 0;
+  box-shadow: 0 30px 60px -34px rgba(13, 40, 49, 0.9);
+}
+
+.paper::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  right: -14px;
+  top: -10px;
+  height: 12px;
+  background: var(--red);
+  border-radius: 1px;
+  box-shadow:
+    inset 0 -2px 0 var(--red-deep),
+    inset 0 2px 0 rgba(252, 226, 175, 0.28);
+}
+
+/* the mountain at night */
+.night {
+  position: relative;
+  background: var(--strokes-light), var(--night);
+  color: var(--paper);
+  padding: clamp(28px, 5vw, 68px);
+  border: 1px solid rgba(252, 226, 175, 0.22);
+  box-shadow: 0 30px 60px -34px rgba(13, 40, 49, 0.95);
+}
+
+.night::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(252, 226, 175, 0.14);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------ eave */
+
+.eave__tile {
+  fill: var(--roof);
+}
+
+.eave__ridge {
+  stroke: var(--red);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ------------------------------------------------------------ reveal on scroll */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 0.9s var(--ease);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* artwork windows open like a sliding screen */
+[data-reveal='wipe'] {
+  opacity: 0;
+  transform: none;
+  clip-path: inset(0 0 94% 0);
+  transition:
+    clip-path 1.3s var(--ease),
+    opacity 0.4s var(--ease);
+}
+
+[data-reveal='wipe'].is-visible {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
