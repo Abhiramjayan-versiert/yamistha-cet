@@ -179,6 +179,7 @@ export function Scene({ entered, reducedMotion, onReady }: Props) {
         <div className="scene__lantern scene__lantern--hall" />
         <div className="scene__lantern scene__lantern--door" />
       </div>
+      <div className="scene__sky" />
       <div className="scene__scrim" ref={scrimRef} />
     </div>
   );

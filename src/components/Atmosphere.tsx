@@ -42,6 +42,7 @@ type Petal = {
   tone: number;
   alpha: number;
   wait: number;
+  once?: boolean;
 };
 
 /* Blossom tones sampled from the painting. */
@@ -233,9 +234,14 @@ export function Atmosphere({ reducedMotion }: { reducedMotion: boolean }) {
             p.spin += (dx > 0 ? 1 : -1) * dt * 2;
           }
         }
-        if (p.y > h + 30 || p.x > w + 40) Object.assign(p, makePetal(false));
+        if (p.y > h + 30 || p.x > w + 40) {
+          if (p.once) p.wait = Infinity;
+          else Object.assign(p, makePetal(false));
+          continue;
+        }
         drawPetal(p);
       }
+      if (petals.length > 60) petals = petals.filter((p) => !(p.once && p.wait === Infinity));
     };
 
     const tick = (now: number) => {
@@ -264,6 +270,22 @@ export function Atmosphere({ reducedMotion }: { reducedMotion: boolean }) {
     const onPointerLeave = () => {
       pointer.active = false;
     };
+    /* a secret found, or some other small celebration: a gust of petals */
+    const onBloom = () => {
+      if (reducedMotion) return;
+      petals = petals.filter((p) => !(p.once && p.wait === Infinity));
+      const count = w < 700 ? 16 : 30;
+      for (let i = 0; i < count; i++) {
+        const p = makePetal(false);
+        p.once = true;
+        p.wait = Math.random() * 1.2;
+        p.x = rand(-40, w * 0.8);
+        p.y = rand(-60, h * 0.3);
+        p.vx *= 1.6;
+        p.vy *= 1.5;
+        petals.push(p);
+      }
+    };
     const onVisibility = () => {
       cancelAnimationFrame(frame);
       last = 0;
@@ -273,6 +295,7 @@ export function Atmosphere({ reducedMotion }: { reducedMotion: boolean }) {
     resize();
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('yamishta:bloom', onBloom);
     if (!reducedMotion) {
       window.addEventListener('pointermove', onPointerMove, { passive: true });
       document.documentElement.addEventListener('pointerleave', onPointerLeave);
@@ -282,6 +305,7 @@ export function Atmosphere({ reducedMotion }: { reducedMotion: boolean }) {
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('yamishta:bloom', onBloom);
       window.removeEventListener('pointermove', onPointerMove);
       document.documentElement.removeEventListener('pointerleave', onPointerLeave);
     };

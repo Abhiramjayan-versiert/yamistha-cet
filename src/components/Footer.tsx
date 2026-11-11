@@ -1,8 +1,10 @@
-import { navLinks, site } from '../data/site';
+import { moreLinks, navLinks, site } from '../data/site';
+import type { SkyApi } from '../hooks/useSky';
+import { SkyControl } from './SkyControl';
 import { Socials } from './Contact';
 import { Crescent, Eave } from './Ornaments';
 
-export function Footer() {
+export function Footer({ sky }: { sky: SkyApi }) {
   return (
     <footer className="footer">
       {/* an open view of the painting before the page comes to rest */}
@@ -25,11 +27,17 @@ export function Footer() {
               </a>
             ))}
             <a href="#register">Register</a>
+            {moreLinks.map((l) => (
+              <a key={l.id} href={`#${l.id}`}>
+                {l.label}
+              </a>
+            ))}
           </nav>
           <div className="footer__social">
             <p className="footer__label">Follow</p>
             <Socials />
           </div>
+          <SkyControl sky={sky} />
         </div>
         <p className="footer__copy">
           &copy; {site.year} {site.name}, {site.host}. All rights reserved.

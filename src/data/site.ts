@@ -19,11 +19,34 @@ export const site = {
   tagline: 'Strategy, in full bloom.',
   /* PLACEHOLDER: for example "14 and 15 February 2027". */
   dates: 'Dates to be announced',
+  /*
+   * PLACEHOLDER: the moment the fest begins, in Indian Standard Time,
+   * written as 'YYYY-MM-DDTHH:mm' (for example '2027-02-13T09:30').
+   * Leave empty and the countdown shows blank lanterns.
+   */
+  startsAt: '',
+  /* The public address of the website. Used for sharing links and previews. */
+  url: 'https://yamishta-2027.vercel.app',
   /* PLACEHOLDER: main registration link (Google Form, Townscript, etc). */
   registrationUrl: '',
   /* PLACEHOLDER: brochure or rulebook PDF link. */
   brochureUrl: '',
 };
+
+/*
+ * PLACEHOLDER announcements. Shown in a thin bar above the navigation.
+ * Give each one a new id so visitors who dismissed an older notice see it.
+ * Leave the list empty to hide the bar.
+ */
+export type Announcement = { id: string; text: string; href?: string; linkLabel?: string };
+export const announcements: Announcement[] = [
+  {
+    id: 'placeholder-1',
+    text: 'Placeholder announcement: deadline extensions and venue changes will appear here.',
+    href: '#register',
+    linkLabel: 'Registration',
+  },
+];
 
 export const navLinks = [
   { id: 'home', label: 'Home' },
@@ -34,6 +57,14 @@ export const navLinks = [
   { id: 'sponsors', label: 'Partners' },
   { id: 'gallery', label: 'Gallery' },
   { id: 'contact', label: 'Contact' },
+] as const;
+
+/* Sections that are reachable from the footer and the mobile menu. */
+export const moreLinks = [
+  { id: 'map', label: 'The Painting' },
+  { id: 'results', label: 'Results' },
+  { id: 'wishes', label: 'Wish Lanterns' },
+  { id: 'faq', label: 'FAQ' },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -65,6 +96,10 @@ export type FestEvent = {
   art: string;
   name: string;
   category: string;
+  /* Which day of the fest. Used by the filters. */
+  day: string;
+  /* 'Solo' or 'Team'. Used by the filters. */
+  format: string;
   summary: string;
   description: string;
   rules: string[];
@@ -83,6 +118,8 @@ const placeholderEvent = (n: number, art: string): FestEvent => {
     art,
     name: `Event Name ${id}`,
     category: 'Category TBA',
+    day: 'Day TBA',
+    format: 'Format TBA',
     summary: 'A short, one line description of this event goes here.',
     description:
       'Replace this text with the full description of the event: the format, the rounds and what the judges are looking for.',
@@ -114,7 +151,13 @@ export const events: FestEvent[] = [
 /* Schedule                                                            */
 /* ------------------------------------------------------------------ */
 
-export type ScheduleItem = { time: string; event: string; venue: string };
+/*
+ * start and end are optional and written in Indian Standard Time as
+ * 'YYYY-MM-DDTHH:mm' (for example '2027-02-13T10:00'). Once they are set,
+ * each stop gains "Add to calendar" links and the schedule highlights
+ * what is happening now and what is next.
+ */
+export type ScheduleItem = { time: string; event: string; venue: string; start?: string; end?: string };
 export type ScheduleDay = { label: string; date: string; items: ScheduleItem[] };
 
 /* PLACEHOLDER schedule. */
@@ -154,6 +197,75 @@ export const registration = {
   ],
   note: 'Registration is handled through an external form. This website does not collect or store any participant data.',
 };
+
+/* ------------------------------------------------------------------ */
+/* Results and leaderboard                                             */
+/* ------------------------------------------------------------------ */
+
+export type Podium = { place: 'First' | 'Second' | 'Third'; team: string; college: string };
+export type EventResult = { event: string; podium: Podium[] };
+
+/*
+ * PLACEHOLDER results. Add one entry per finished event, for example:
+ *   { event: 'Event Name 01', podium: [{ place: 'First', team: 'Team', college: 'College' }] }
+ * While the list is empty the section explains that results are pending.
+ */
+export const results: EventResult[] = [];
+
+/* PLACEHOLDER overall standings, for a college-wise championship. Optional. */
+export type Standing = { college: string; points: number };
+export const standings: Standing[] = [];
+
+/* ------------------------------------------------------------------ */
+/* The painting: places and secrets                                    */
+/* ------------------------------------------------------------------ */
+
+/* Positions are percentages of the painting (left, top). */
+export type Place = { id: string; name: string; note: string; x: number; y: number; target: string };
+
+export const places: Place[] = [
+  { id: 'branch', name: 'The Great Branch', note: 'Gallery', x: 30.6, y: 13.7, target: 'gallery' },
+  { id: 'clouds', name: 'The Cloud Bank', note: 'Schedule', x: 73.5, y: 25.4, target: 'schedule' },
+  { id: 'ridge', name: 'The Violet Ridge', note: 'Results', x: 40.4, y: 38.5, target: 'results' },
+  { id: 'peak', name: 'The Teal Peak', note: 'Events', x: 85.8, y: 38.5, target: 'events' },
+  { id: 'pavilion', name: 'The Pavilion', note: 'Registration', x: 30.6, y: 65.2, target: 'register' },
+  { id: 'valley', name: 'The Valley', note: 'Partners', x: 82, y: 76.2, target: 'sponsors' },
+  { id: 'steps', name: 'The Stone Steps', note: 'Venue', x: 42.9, y: 82.4, target: 'venue' },
+  { id: 'grove', name: 'The Lower Grove', note: 'Wish Lanterns', x: 68.6, y: 94.8, target: 'wishes' },
+];
+
+/* Unmarked details in the painting. Finding all of them reveals the reward. */
+export type Secret = { id: string; x: number; y: number; found: string };
+
+export const secrets: Secret[] = [
+  { id: 'moon', x: 84.6, y: 10.3, found: 'The moon noticed you.' },
+  { id: 'flag', x: 25.1, y: 52.3, found: 'The pavilion flag caught the wind.' },
+  { id: 'petals', x: 52.8, y: 21.6, found: 'Two petals, still falling.' },
+];
+
+/*
+ * PLACEHOLDER reward shown when every secret is found. Note that anything
+ * written here can be read in the page source, so do not treat a code
+ * placed here as confidential.
+ */
+export const secretReward = {
+  title: 'You found every secret.',
+  text: 'Reward text TBA. The organising team can place a teaser or an offer here.',
+};
+
+/* ------------------------------------------------------------------ */
+/* Frequently asked questions                                          */
+/* ------------------------------------------------------------------ */
+
+/* PLACEHOLDER answers. The questions are suggestions and can be changed. */
+export const faqs: { q: string; a: string }[] = [
+  { q: 'Who can take part?', a: 'Answer TBA. State which students and institutions are eligible.' },
+  { q: 'Is there a registration fee?', a: 'Answer TBA. List the fee per event or per team, and how to pay.' },
+  { q: 'Is accommodation available?', a: 'Answer TBA. Explain the options, the cost and how to request a place.' },
+  { q: 'Will participants receive certificates?', a: 'Answer TBA.' },
+  { q: 'Can one person join more than one event?', a: 'Answer TBA. Mention any clashes in the schedule.' },
+  { q: 'How do I reach the campus?', a: 'Answer TBA. Add the nearest station, airport and bus routes.' },
+];
 
 /* ------------------------------------------------------------------ */
 /* Venue                                                               */

@@ -29,7 +29,7 @@ export function Contact() {
       <div className="wrap">
         <div className="night contact__panel">
           <SectionHeading
-            index="08"
+            index="12"
             label="Contact"
             id="contact-title"
             title="Send word to the pavilion."

@@ -566,7 +566,7 @@
 
 .footer__inner {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 0.8fr;
+  grid-template-columns: 1.25fr 1fr 0.6fr 0.9fr;
   gap: clamp(28px, 5vw, 70px);
   padding-bottom: clamp(36px, 5vw, 60px);
 }
@@ -648,6 +648,12 @@
   text-align: center;
   color: rgba(246, 232, 203, 0.66);
   border-top: 1px solid rgba(252, 226, 175, 0.14);
+}
+
+@media (max-width: 1000px) {
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 760px) {

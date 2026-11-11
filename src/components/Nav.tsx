@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { navLinks, site } from '../data/site';
+import { moreLinks, navLinks, site } from '../data/site';
+import { Announcement } from './Announcement';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { Crescent, Eave } from './Ornaments';
 
@@ -32,6 +33,7 @@ export function Nav({ visible }: { visible: boolean }) {
 
   return (
     <header className={`nav ${visible ? 'is-visible' : ''} ${scrolled ? 'is-scrolled' : ''} ${open ? 'is-open' : ''}`}>
+      <Announcement onNavigate={() => setOpen(false)} />
       <div className="nav__bar">
         <a className="nav__brand" href="#home" onClick={() => setOpen(false)} aria-label={`${site.name} ${site.year}, home`}>
           <Crescent className="nav__brand-moon" />
@@ -87,6 +89,13 @@ export function Nav({ visible }: { visible: boolean }) {
             </a>
           ))}
         </nav>
+        <div className="nav__sheet-more">
+          {moreLinks.map((link) => (
+            <a key={link.id} href={`#${link.id}`} onClick={() => setOpen(false)} tabIndex={open ? 0 : -1}>
+              {link.label}
+            </a>
+          ))}
+        </div>
         <a className="btn btn--primary nav__sheet-register" href="#register" onClick={() => setOpen(false)} tabIndex={open ? 0 : -1}>
           Register Now
         </a>

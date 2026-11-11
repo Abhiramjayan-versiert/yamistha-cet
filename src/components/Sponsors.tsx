@@ -8,7 +8,7 @@ export function Sponsors() {
     <section id="sponsors" className="section sponsors" ref={ref} aria-labelledby="sponsors-title">
       <div className="wrap">
         <SectionHeading
-          index="06"
+          index="08"
           label="Sponsors and Partners"
           id="sponsors-title"
           align="center"

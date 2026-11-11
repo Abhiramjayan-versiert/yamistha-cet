@@ -10,7 +10,8 @@ the original illustration (art-source/yamishta-reference.jpg):
   cloud-*.webp   clouds cut from the painting, used as drifting layers
   card-*.webp    crops used on event cards
   panel-*.webp   crops used as framed windows in sections
-  og.jpg         social sharing image
+  painting.webp  the whole painting, for the map section
+  og*.jpg        social sharing images
 
 Usage:  python3 scripts/build-art.py <painting.png> [scale]
         <painting.png> may be the original or an upscaled copy of it;
@@ -135,6 +136,20 @@ crop((40, 770, 500, 1345), 'panel-pavilion.webp', (920, 1150))
 crop((456, 880, 816, 1240), 'panel-valley.webp', (720, 720))
 crop((0, 1150, 816, 1456), 'panel-grove.webp', (1632, 612))
 crop((0, 380, 816, 760), 'panel-range.webp', (1632, 760))
+
+# the whole painting, untouched, for the map section
+im.resize((980, 1749), Image.LANCZOS).save(OUT + 'painting.webp', quality=82, method=6)
+
+# wide versions of the card crops, used as link previews for event pages
+for name, (bx0, by0, bx1, by1) in {
+    'card-temple': (96, 786, 456, 1056), 'card-moon': (536, 70, 816, 280), 'card-ridge': (196, 498, 516, 738),
+    'card-peak': (576, 462, 816, 642), 'card-steps': (236, 1096, 556, 1336), 'card-clouds': (440, 280, 760, 520),
+}.items():
+    w = bx1 - bx0
+    hh = w * 630 / 1200
+    cy = (by0 + by1) / 2
+    box = tuple(round(v * S) for v in (bx0, cy - hh / 2, bx1, cy + hh / 2))
+    im.crop(box).resize((1200, 630), Image.LANCZOS).save(OUT + 'og-' + name + '.jpg', quality=84)
 
 x0, y0 = 0, 700 * S
 og = im.crop((0, y0, 816 * S, y0 + round(816 * S * 630 / 1200))).resize((1200, 630), Image.LANCZOS)

@@ -10,6 +10,7 @@ import './styles/base.css';
 import './styles/scene.css';
 import './styles/chrome.css';
 import './styles/sections.css';
+import './styles/features.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(

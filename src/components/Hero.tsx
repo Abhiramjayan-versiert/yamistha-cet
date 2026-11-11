@@ -1,4 +1,5 @@
 import { site } from '../data/site';
+import { Countdown } from './Countdown';
 
 export function Hero({ entered }: { entered: boolean }) {
   return (
@@ -19,6 +20,7 @@ export function Hero({ entered }: { entered: boolean }) {
         </p>
         <p className="hero__tagline">{site.tagline}</p>
         <p className="hero__dates">{site.dates}</p>
+        <Countdown />
         <div className="hero__actions">
           <a className="btn btn--primary" href="#events">
             Explore Events

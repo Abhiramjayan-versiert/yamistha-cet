@@ -94,7 +94,12 @@
 /* lamplight inside the pavilion */
 .scene__lantern {
   position: absolute;
-  background: radial-gradient(ellipse, rgba(255, 205, 130, 0.55) 0%, rgba(255, 190, 110, 0.2) 45%, rgba(255, 190, 110, 0) 72%);
+  background: radial-gradient(
+    ellipse,
+    rgb(255 205 130 / calc(0.55 * var(--lamp, 1))) 0%,
+    rgb(255 190 110 / calc(0.2 * var(--lamp, 1))) 45%,
+    rgb(255 190 110 / 0) 72%
+  );
   mix-blend-mode: screen;
   animation: lamplight 5.5s ease-in-out infinite;
 }
@@ -636,7 +641,7 @@
 
 @media (max-width: 640px) {
   .hero {
-    padding-top: 100px;
+    padding-top: 150px;
   }
 
   .hero::before {
