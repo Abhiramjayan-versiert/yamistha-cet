@@ -1,6 +1,6 @@
-# YAMISHTA 2026
+# YAMISHTA 2027
 
-Website for YAMISHTA 2026, the National Management Fest of the College of Engineering Trivandrum.
+Website for YAMISHTA 2027, the National Management Fest of the College of Engineering Trivandrum.
 
 The whole site is built from one painting (`art-source/yamishta-reference.jpg`). The painting is fixed behind the page and a camera travels over it: it rests on the pavilion at the entry screen, rises to the moon when the visitor enters, then descends through the clouds and mountains as they scroll, returning to the pavilion at the footer. Snow, drifting clouds, the swaying branch and falling petals are layered on top.
 

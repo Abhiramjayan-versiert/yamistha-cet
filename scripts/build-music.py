@@ -1,5 +1,5 @@
 """
-Original soundtrack for YAMISHTA 2026.
+Original soundtrack for YAMISHTA 2027.
 
 The whole piece is synthesised here from sine waves, plucked string
 models and filtered noise. It uses no samples and no third party

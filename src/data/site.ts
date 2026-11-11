@@ -1,5 +1,5 @@
 /*
- * YAMISHTA 2026: single source of truth for all website content.
+ * YAMISHTA 2027: single source of truth for all website content.
  *
  * Everything the organising team needs to update lives in this file.
  * Any value that begins with "TBA" or lives in a field marked PLACEHOLDER
@@ -11,13 +11,13 @@
 
 export const site = {
   name: 'YAMISHTA',
-  year: '2026',
+  year: '2027',
   descriptor: 'National Management Fest',
   host: 'College of Engineering Trivandrum',
   hostShort: 'CET',
   /* PLACEHOLDER tagline. Replace with the official line if there is one. */
   tagline: 'Strategy, in full bloom.',
-  /* PLACEHOLDER: for example "14 and 15 February 2026". */
+  /* PLACEHOLDER: for example "14 and 15 February 2027". */
   dates: 'Dates to be announced',
   /* PLACEHOLDER: main registration link (Google Form, Townscript, etc). */
   registrationUrl: '',
@@ -45,7 +45,7 @@ export const about = {
   /* PLACEHOLDER paragraphs. Replace with the official write-up. */
   paragraphs: [
     'This space is reserved for the story of YAMISHTA: what the fest stands for, who it is for and what participants can expect across its days. The organising team can replace this paragraph with the official introduction.',
-    'Use this second paragraph for the theme of the 2026 edition, the kinds of competitions on offer and anything first-time visitors should know before they arrive on campus.',
+    'Use this second paragraph for the theme of the 2027 edition, the kinds of competitions on offer and anything first-time visitors should know before they arrive on campus.',
   ],
   /* PLACEHOLDER highlights. Do not publish numbers that are not confirmed. */
   highlights: [
