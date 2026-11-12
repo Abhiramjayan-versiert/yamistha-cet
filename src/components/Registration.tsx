@@ -1,6 +1,7 @@
 import { registration, site } from '../data/site';
 import { useReveal } from '../hooks/useReveal';
-import { Action, Pending, SectionHeading } from './Ornaments';
+import { Action, SectionHeading } from './Ornaments';
+import { RegistrationForm } from './RegistrationForm';
 
 export function Registration() {
   const ref = useReveal<HTMLElement>();
@@ -28,24 +29,29 @@ export function Registration() {
               ))}
             </dl>
             <div className="register__actions">
-              <Action href={site.registrationUrl} pendingLabel="Registration opens soon">
-                Register Now
-              </Action>
+              {site.registrationUrl ? (
+                <Action href={site.registrationUrl} pendingLabel="">
+                  Register Now
+                </Action>
+              ) : (
+                <a className="btn btn--primary" href="#register-form">
+                  {registration.open ? 'Register Now' : 'Registration closed'}
+                </a>
+              )}
               <Action href={site.brochureUrl} variant="ghost" pendingLabel="Brochure coming soon">
                 Download Brochure
               </Action>
             </div>
             <p className="register__note">
               {registration.note}
-              {!site.registrationUrl ? (
-                <>
-                  {' '}
-                  <Pending>Registration link not yet configured</Pending>
-                </>
-              ) : null}
             </p>
           </div>
         </div>
+        {!site.registrationUrl ? (
+          <div data-reveal>
+            <RegistrationForm />
+          </div>
+        ) : null}
       </div>
     </section>
   );

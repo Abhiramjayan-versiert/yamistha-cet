@@ -27,7 +27,10 @@ export const site = {
   startsAt: '',
   /* The public address of the website. Used for sharing links and previews. */
   url: 'https://yamishta-2027.vercel.app',
-  /* PLACEHOLDER: main registration link (Google Form, Townscript, etc). */
+  /*
+   * Leave empty to use the built-in registration form. Set a link here
+   * only if registration moves to an external form instead.
+   */
   registrationUrl: '',
   /* PLACEHOLDER: brochure or rulebook PDF link. */
   brochureUrl: '',
@@ -189,13 +192,30 @@ export const schedule: ScheduleDay[] = [
 /* ------------------------------------------------------------------ */
 
 export const registration = {
+  /* Set to false to close the form. Visitors then see a closed notice. */
+  open: true,
+  /* How many members a team may add besides its leader. PLACEHOLDER. */
+  maxMembers: 4,
+  /* Show the "we need accommodation" option on the form. */
+  askAccommodation: true,
+  /*
+   * PLACEHOLDER payment details shown on the form. Participants pay
+   * outside the website and type their transaction reference. While
+   * upiId still says TBA the reference is optional.
+   */
+  payment: {
+    amount: 'Fee TBA',
+    payee: 'Payee name TBA',
+    upiId: 'UPI ID TBA',
+    instructions: 'Pay the registration fee to the account above, then enter the transaction reference from your payment app.',
+  },
   /* PLACEHOLDER details. */
   points: [
     { label: 'Registration opens', value: 'TBA' },
     { label: 'Registration closes', value: 'TBA' },
     { label: 'Fee', value: 'TBA' },
   ],
-  note: 'Registration is handled through an external form. This website does not collect or store any participant data.',
+  note: 'Your details are stored in the fest database and are seen only by the organising committee.',
 };
 
 /* ------------------------------------------------------------------ */

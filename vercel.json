@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/events/:slug", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/events/:slug", "destination": "/index.html" },
+    { "source": "/admin", "destination": "/index.html" }
+  ]
 }

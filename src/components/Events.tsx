@@ -148,9 +148,23 @@ function EventDetail({ event, onClose }: { event: FestEvent; onClose: () => void
           </p>
 
           <div className="detail__actions">
-            <Action href={event.registrationUrl} variant="primary" pendingLabel="Registration link coming soon">
-              Register for this event
-            </Action>
+            {event.registrationUrl ? (
+              <Action href={event.registrationUrl} variant="primary" pendingLabel="">
+                Register for this event
+              </Action>
+            ) : (
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() => {
+                  onClose();
+                  window.dispatchEvent(new CustomEvent('yamishta:register', { detail: event.slug }));
+                  window.setTimeout(() => document.getElementById('register-form')?.scrollIntoView({ behavior: 'smooth' }), 60);
+                }}
+              >
+                Register for this event
+              </button>
+            )}
             <button type="button" className="btn btn--ink" onClick={share}>
               Share this event
             </button>

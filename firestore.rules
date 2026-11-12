@@ -1,0 +1,92 @@
+rules_version = '2';
+
+// YAMISHTA: registrations, wish lanterns and admin access.
+//
+// Anyone may submit a registration or a wish. Only admins can read
+// registrations. An admin is a signed-in user with a verified email
+// address that has a document in the "admins" collection.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email));
+    }
+
+    function text(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+
+    function validRegistration(d, code) {
+      return d.keys().hasOnly(['code', 'createdAt', 'teamName', 'college', 'leaderName', 'leaderEmail', 'leaderPhone',
+                               'members', 'events', 'accommodation', 'paymentReference', 'message', 'status',
+                               'adminNote', 'reviewedAt'])
+        && d.keys().hasAll(['code', 'createdAt', 'teamName', 'college', 'leaderName', 'leaderEmail', 'leaderPhone',
+                            'members', 'events', 'accommodation', 'paymentReference', 'message', 'status',
+                            'adminNote', 'reviewedAt'])
+        && code.matches('^YM-[A-HJ-NP-Z2-9]{6}$')
+        && d.code == code
+        && d.createdAt == request.time
+        && text(d.teamName, 1, 80)
+        && text(d.college, 1, 140)
+        && text(d.leaderName, 1, 80)
+        && text(d.leaderEmail, 5, 200)
+        && d.leaderEmail.matches('^[^@/\\s]+@[^@/\\s]+[.][^@/\\s]+$')
+        && d.leaderEmail == d.leaderEmail.lower()
+        && d.leaderPhone is string
+        && d.leaderPhone.matches('^[+]?[0-9]{7,15}$')
+        && d.members is list && d.members.size() <= 10
+        && d.events is list && d.events.size() >= 1 && d.events.size() <= 30
+        && d.accommodation is bool
+        && text(d.paymentReference, 0, 80)
+        && text(d.message, 0, 500)
+        && d.status == 'pending'
+        && d.adminNote == ''
+        && d.reviewedAt == null;
+    }
+
+    // One document per team. The document ID is the registration code.
+    match /registrations/{code} {
+      allow create: if validRegistration(request.resource.data, code);
+      allow read, update, delete: if isAdmin();
+    }
+
+    // A small public record a team can look up with its code and the
+    // leader's email (together they form the document ID). It holds only
+    // the team name and the review status.
+    match /registrationStatus/{id} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['code', 'teamName', 'status', 'createdAt'])
+        && request.resource.data.keys().hasAll(['code', 'teamName', 'status', 'createdAt'])
+        && request.resource.data.code is string
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time
+        && existsAfter(/databases/$(database)/documents/registrations/$(request.resource.data.code))
+        && id == request.resource.data.code + '_'
+             + getAfter(/databases/$(database)/documents/registrations/$(request.resource.data.code)).data.leaderEmail
+        && request.resource.data.teamName
+             == getAfter(/databases/$(database)/documents/registrations/$(request.resource.data.code)).data.teamName;
+      allow update, delete: if isAdmin();
+    }
+
+    // Wish lanterns: submitted unapproved, public once an admin approves.
+    match /wishes/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['text', 'approved', 'createdAt'])
+        && request.resource.data.keys().hasAll(['text', 'approved', 'createdAt'])
+        && text(request.resource.data.text, 1, 80)
+        && request.resource.data.approved == false
+        && request.resource.data.createdAt == request.time;
+      allow read: if resource.data.approved == true || isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // The admin allow-list. The document ID is the admin's email in lower case.
+    match /admins/{email} {
+      allow get: if isAdmin() || (request.auth != null && request.auth.token.email == email);
+      allow list, create, delete: if isAdmin();
+    }
+  }
+}

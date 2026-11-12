@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@fontsource/shippori-mincho/latin-500.css';
 import '@fontsource/shippori-mincho/latin-700.css';
@@ -13,8 +13,18 @@ import './styles/sections.css';
 import './styles/features.css';
 import App from './App';
 
+/* The dashboard and its database client load only on /admin. */
+const Admin = lazy(() => import('./admin/Admin'));
+const isAdmin = /^\/admin\/?$/.test(window.location.pathname);
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    {isAdmin ? (
+      <Suspense fallback={null}>
+        <Admin />
+      </Suspense>
+    ) : (
+      <App />
+    )}
   </StrictMode>,
 );

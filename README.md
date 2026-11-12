@@ -13,7 +13,7 @@ npm run build    # production build in dist/
 npm run preview  # serve the production build
 ```
 
-Stack: React 19, TypeScript, Vite, plain CSS. No animation or UI libraries.
+Stack: React 19, TypeScript, Vite, plain CSS, Firebase for registration data. No animation or UI libraries.
 
 ## Updating content
 
@@ -21,7 +21,7 @@ Everything editable lives in **`src/data/site.ts`**: tagline, dates, events, sch
 
 - Values containing `TBA` and fields marked `PLACEHOLDER` are not real information. Replace them before launch. They are shown on the site with a dashed "placeholder" tag so nothing can be mistaken for confirmed detail.
 - Leave a URL as `''` and its button shows an "opening soon" notice instead of a dead link.
-- `registrationUrl`: the external registration form. The site itself never collects or stores data.
+- `registrationUrl`: leave empty to use the built-in registration form. Set it only to send people to an external form instead.
 - `venue.mapEmbedUrl`: paste a Google Maps "Embed a map" URL to replace the map placeholder.
 - Gallery: put photographs in `public/gallery/` and set `src` on each item. Frames without a `src` stay as empty mounts.
 - Partners: add `logo` (a path in `public/`) and `url` per partner.
@@ -40,26 +40,55 @@ Everything editable lives in **`src/data/site.ts`**: tagline, dates, events, sch
 | Add to calendar, and the live strip | Add `start` and `end` to schedule items (Indian Standard Time). Both appear only for items that have a `start`. |
 | Results and standings | `results` and `standings`. |
 | FAQ | `faqs`. |
-| Wish lanterns | Works with no setup: lanterns are kept in the visitor's own browser. See below to share them between visitors. |
+| Wish lanterns | Works with no setup: lanterns are kept in the visitor's own browser. Once Firebase is connected, wishes are also sent for approval and approved ones are shown to everyone. |
 | Sound effects | Chimes and wind follow the music toggle and its volume. |
 
-### Sharing wish lanterns between visitors (optional)
+## Registration and the admin dashboard
 
-By default nothing a visitor writes leaves their browser. To show approved wishes to everyone, create a Supabase project, run this SQL, and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the Vercel project's environment variables.
+Teams register in the Registration section of the site. The committee reviews them at `/admin`.
 
-```sql
-create table wishes (
-  id bigint generated always as identity primary key,
-  text text not null check (char_length(text) between 1 and 80),
-  approved boolean not null default false,
-  created_at timestamptz not null default now()
-);
-alter table wishes enable row level security;
-create policy "anyone can submit" on wishes for insert to anon with check (approved = false);
-create policy "approved are public" on wishes for select to anon using (approved = true);
+Both use Firebase (Firestore for data, Firebase Authentication for admin sign-in). Until Firebase is connected the form shows a "not connected" notice and cannot be submitted, so nothing is ever pretended to be saved.
+
+### Connect Firebase (about ten minutes, once)
+
+1. In the [Firebase console](https://console.firebase.google.com) create a project. The free Spark plan is enough.
+2. **Build, Firestore Database, Create database.** Choose production mode and a region near your participants (for India, `asia-south1`).
+3. Open the **Rules** tab of Firestore, replace everything with the contents of `firestore.rules` from this repository, and publish.
+4. **Build, Authentication, Get started**, then enable the **Email/Password** sign-in method.
+5. In Authentication, **Settings, Authorised domains**, add the site's domain (for example `yamishta-2027.vercel.app`).
+6. **Project settings, Your apps**, add a Web app and copy its `apiKey`, `projectId` and `appId`.
+7. Add those as environment variables in the Vercel project (see `.env.example`): `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_PROJECT_ID`, `VITE_FIREBASE_APP_ID`. Redeploy. These values are public by design. Access is controlled by the rules from step 3.
+8. Make the first admin: in Firestore create a collection named `admins` and add a document whose **Document ID is the admin's email address in lower case** (any field, for example `addedAt`).
+9. Open `/admin` on the site, choose "Create an account" with that same email, and confirm the address from the email Firebase sends. More admins can then be added from the dashboard's Admins tab.
+
+### What the committee can do at /admin
+
+- See totals, and how many teams each event has.
+- Search and filter registrations, open one to see every member, the payment reference and any message.
+- Mark a registration verified or rejected, keep a private note, or delete it.
+- Export the current view as a CSV file.
+- Approve or remove wish lanterns. A wish is public only after approval.
+- Add and remove admins.
+
+### What participants get
+
+On submitting, a team sees a registration code (for example `YM-7K2MPQ`). No email is sent. With the code and the leader's email they can check their status in the same section at any time.
+
+Registration settings (open or closed, team size, payment details shown on the form) are in the `registration` block of `src/data/site.ts`.
+
+### Payment
+
+There is no online checkout. The form shows the payment details from `registration.payment`, the team pays outside the website and types the transaction reference, and an admin verifies it against the bank or UPI statement.
+
+### Testing locally with the Firebase emulators
+
+```bash
+npx firebase-tools emulators:start --only auth,firestore --project demo-yamishta
 ```
 
-New wishes arrive unapproved. A committee member sets `approved` to true in the Supabase table editor before a wish appears for other visitors.
+```bash
+VITE_FIREBASE_API_KEY=demo VITE_FIREBASE_PROJECT_ID=demo-yamishta VITE_FIREBASE_EMULATOR=1 npm run dev
+```
 
 ## Structure
 
@@ -72,15 +101,17 @@ src/
     Gate.tsx              ENTER YAMISHTA opening screen
     Nav.tsx, Announcement.tsx, MusicControl.tsx, SkyControl.tsx, Footer.tsx
     Hero (with Countdown), About, PaintingMap, Events, Schedule, Registration,
-    Results, Venue, Sponsors, Gallery, Wishes, Faq, Contact
+    RegistrationForm, Results, Venue, Sponsors, Gallery, Wishes, Faq, Contact
+  admin/                  the committee dashboard at /admin (loaded only there)
   hooks/                  audio, sky, reduced motion, scroll reveal, active section
-  lib/                    calendar files, sound effects, wish storage, time parsing
+  lib/                    database access, calendar files, sound effects, wishes, time parsing
   styles/                 base (tokens), scene, chrome, sections, features
 scripts/
   build-art.py            cuts every image in public/art from the painting
   build-music.py          synthesises the soundtrack
 vite.config.ts            also writes one page per event at build time
-vercel.json               routes /events/<slug> to the app
+vercel.json               routes /events/<slug> and /admin to the app
+firestore.rules           who may read and write what in the database
 ```
 
 ## Artwork
