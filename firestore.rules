@@ -33,7 +33,7 @@ service cloud.firestore {
         && text(d.college, 1, 140)
         && text(d.leaderName, 1, 80)
         && text(d.leaderEmail, 5, 200)
-        && d.leaderEmail.matches('^[^@/\\s]+@[^@/\\s]+[.][^@/\\s]+$')
+        && d.leaderEmail.matches('^[^@/ ]+@[^@/ ]+[.][^@/ ]+$')
         && d.leaderEmail == d.leaderEmail.lower()
         && d.leaderPhone is string
         && d.leaderPhone.matches('^[+]?[0-9]{7,15}$')
