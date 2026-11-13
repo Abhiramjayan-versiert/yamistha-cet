@@ -17,7 +17,7 @@ export function About() {
 
         <div className="paper about__text">
           <SectionHeading
-            index="01"
+            index="02"
             label={`About ${site.name}`}
             id="about-title"
             tone="dark"

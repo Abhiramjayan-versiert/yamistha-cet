@@ -22,7 +22,7 @@ export function Nav({ visible }: { visible: boolean }) {
     document.body.classList.toggle('menu-open', open);
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    const onResize = () => window.innerWidth > 1080 && setOpen(false);
+    const onResize = () => window.innerWidth > 1180 && setOpen(false);
     window.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
     return () => {

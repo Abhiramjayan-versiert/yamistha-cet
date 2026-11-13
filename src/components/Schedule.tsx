@@ -67,7 +67,7 @@ export function Schedule() {
       <div className="wrap">
         <div className="night schedule__panel">
           <SectionHeading
-            index="04"
+            index="05"
             label="Schedule"
             id="schedule-title"
             title="Follow the lantern path."

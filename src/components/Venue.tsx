@@ -8,7 +8,7 @@ export function Venue() {
     <section id="venue" className="section venue" ref={ref} aria-labelledby="venue-title">
       <div className="wrap venue__grid">
         <div className="paper venue__text">
-          <SectionHeading index="07" label="Venue" id="venue-title" tone="dark" title="Where the path leads." />
+          <SectionHeading index="08" label="Venue" id="venue-title" tone="dark" title="Where the path leads." />
           <address className="venue__address" data-reveal>
             <strong>{venue.institution}</strong>
             <span>{venue.locality}</span>

@@ -105,7 +105,7 @@ export function Gallery() {
     <section id="gallery" className="section gallery" ref={ref} aria-labelledby="gallery-title">
       <div className="wrap">
         <SectionHeading
-          index="09"
+          index="10"
           label="Gallery"
           id="gallery-title"
           title="Scenes from the fest."

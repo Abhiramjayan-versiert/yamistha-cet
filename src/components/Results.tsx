@@ -12,7 +12,7 @@ export function Results() {
       <div className="wrap">
         <div className="paper results__panel">
           <SectionHeading
-            index="06"
+            index="07"
             label="Results"
             id="results-title"
             tone="dark"

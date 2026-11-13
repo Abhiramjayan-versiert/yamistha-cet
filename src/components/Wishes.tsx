@@ -88,7 +88,7 @@ export function Wishes() {
         <div className="night wishes__panel">
           <div className="wishes__intro">
             <SectionHeading
-              index="10"
+              index="01"
               label="Wish Lanterns"
               id="wishes-title"
               title="Release a lantern."

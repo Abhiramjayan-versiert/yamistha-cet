@@ -25,7 +25,7 @@ import { useSky } from './hooks/useSky';
 import { sfx } from './lib/sfx';
 
 /* every section in page order: a chime marks the passage from one to the next */
-const SECTIONS = ['home', 'about', 'map', 'events', 'schedule', 'register', 'results', 'venue', 'sponsors', 'gallery', 'wishes', 'faq', 'contact'] as const;
+const SECTIONS = ['home', 'wishes', 'about', 'map', 'events', 'schedule', 'register', 'results', 'venue', 'sponsors', 'gallery', 'faq', 'contact'] as const;
 const HOVER_TARGETS = '.btn, .event-card__button, .frame button, .map__place, .map__list a, .plaque > a, .wish button';
 
 export default function App() {
@@ -92,12 +92,13 @@ export default function App() {
   return (
     <>
       <Scene entered={entered} reducedMotion={reducedMotion} onReady={onReady} />
-      <a className="skip" href="#about">
+      <a className="skip" href="#wishes">
         Skip to content
       </a>
       <Nav visible={entered} />
       <main inert={!entered}>
         <Hero entered={entered} />
+        <Wishes />
         <About />
         <PaintingMap />
         <Events entered={entered} />
@@ -107,7 +108,6 @@ export default function App() {
         <Venue />
         <Sponsors />
         <Gallery />
-        <Wishes />
         <Faq />
         <Contact />
       </main>

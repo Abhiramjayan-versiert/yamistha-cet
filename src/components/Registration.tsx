@@ -13,7 +13,7 @@ export function Registration() {
           <div className="register__beam" aria-hidden="true" />
           <div className="register__content">
             <SectionHeading
-              index="05"
+              index="06"
               label="Registration"
               id="register-title"
               align="center"

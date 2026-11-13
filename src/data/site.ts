@@ -53,6 +53,7 @@ export const announcements: Announcement[] = [
 
 export const navLinks = [
   { id: 'home', label: 'Home' },
+  { id: 'wishes', label: 'Wishes' },
   { id: 'about', label: 'About' },
   { id: 'events', label: 'Events' },
   { id: 'schedule', label: 'Schedule' },
@@ -66,7 +67,6 @@ export const navLinks = [
 export const moreLinks = [
   { id: 'map', label: 'The Painting' },
   { id: 'results', label: 'Results' },
-  { id: 'wishes', label: 'Wish Lanterns' },
   { id: 'faq', label: 'FAQ' },
 ] as const;
 

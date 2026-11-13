@@ -92,7 +92,7 @@ export function PaintingMap() {
 
         <div className="night map__legend">
           <SectionHeading
-            index="02"
+            index="03"
             label="The Painting"
             id="map-title"
             title="Wander the painting."

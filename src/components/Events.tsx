@@ -262,7 +262,7 @@ export function Events({ entered }: { entered: boolean }) {
     <section id="events" className="section events" ref={ref} aria-labelledby="events-title">
       <div className="wrap">
         <SectionHeading
-          index="03"
+          index="04"
           label="Events"
           id="events-title"
           align="center"

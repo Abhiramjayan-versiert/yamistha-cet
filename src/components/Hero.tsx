@@ -30,7 +30,7 @@ export function Hero({ entered }: { entered: boolean }) {
           </a>
         </div>
       </div>
-      <a className="hero__scroll" href="#about" aria-label="Scroll to About">
+      <a className="hero__scroll" href="#wishes" aria-label="Scroll to the wish lanterns">
         <span>Descend</span>
         <i />
       </a>
