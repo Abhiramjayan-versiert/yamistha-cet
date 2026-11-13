@@ -332,7 +332,7 @@ export const partnerTiers: PartnerTier[] = [
   {
     tier: 'Media Partners',
     size: 'standard',
-    partners: [{ name: 'Media partner' }, { name: 'Media partner' }, { name: 'Media partner' }],
+    partners: [{ name: 'Versiert Media', logo: '/partners/versiert-media.png' }, { name: 'Media partner' }, { name: 'Media partner' }],
   },
   {
     tier: 'Other Partners',
