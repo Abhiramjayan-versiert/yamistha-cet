@@ -20,7 +20,9 @@ import {
   loadRegistrations,
   loadWishes,
   removeAdmin as removeAdminDoc,
+  refreshToken,
   reviewRegistration,
+  errorCode,
   setWishApproved,
   toCsv,
   type AdminRow,
@@ -99,14 +101,22 @@ function SignIn() {
 
 /* ------------------------------------------------------------------ registrations */
 
-function RegistrationRow({ row, onChange, onDelete }: { row: Registration; onChange: (row: Registration, patch: { status?: Status; adminNote?: string }) => Promise<void>; onDelete: (row: Registration) => Promise<void> }) {
+function RegistrationRow({ row, onChange, onDelete }: { row: Registration; onChange: (row: Registration, patch: { status?: Status; adminNote?: string }) => Promise<string>; onDelete: (row: Registration) => Promise<void> }) {
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState(row.adminNote);
   const [busy, setBusy] = useState(false);
 
+  const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
+
   const act = async (patch: { status?: Status; adminNote?: string }) => {
     setBusy(true);
-    await onChange(row, patch);
+    setFeedback(null);
+    const problem = await onChange(row, patch);
+    setFeedback(
+      problem
+        ? { ok: false, text: problem }
+        : { ok: true, text: patch.status ? `Saved. Marked as ${patch.status}.` : 'Note saved.' },
+    );
     setBusy(false);
   };
 
@@ -184,6 +194,9 @@ function RegistrationRow({ row, onChange, onDelete }: { row: Registration; onCha
               Delete
             </button>
           </div>
+          <p className={`adm-feedback ${feedback && !feedback.ok ? 'is-error' : ''}`} role="status">
+            {busy ? 'Saving' : (feedback?.text ?? '')}
+          </p>
         </div>
       ) : null}
     </li>
@@ -223,12 +236,25 @@ function Dashboard({ user }: { user: User }) {
     return () => window.clearInterval(id);
   }, [load]);
 
-  const change = async (row: Registration, patch: { status?: Status; adminNote?: string }) => {
+  /* Returns an empty string on success, or a message to show beside the buttons. */
+  const change = async (row: Registration, patch: { status?: Status; adminNote?: string }): Promise<string> => {
     try {
-      await reviewRegistration(row, patch);
+      const synced = await reviewRegistration(row, patch);
       setRows((list) => list.map((r) => (r.code === row.code ? { ...r, ...patch } : r)));
-    } catch {
-      setError('That change could not be saved.');
+      return synced ? '' : 'Saved, but the team\'s status lookup could not be updated. The dashboard shows the correct status.';
+    } catch (err) {
+      const code = errorCode(err);
+      if (code === 'permission-denied') {
+        await refreshToken();
+        try {
+          await reviewRegistration(row, patch);
+          setRows((list) => list.map((r) => (r.code === row.code ? { ...r, ...patch } : r)));
+          return '';
+        } catch (again) {
+          return `Firebase refused the change (${errorCode(again)}). Sign out, sign in again, and retry.`;
+        }
+      }
+      return `The change could not be saved (${code}). Check your connection and retry.`;
     }
   };
 
@@ -546,9 +572,11 @@ export default function Admin() {
   useEffect(() => {
     if (!email || !verified) return;
     let live = true;
-    void isAdmin(email).then((ok) => {
-      if (live) setAllowed(ok);
-    });
+    void refreshToken()
+      .then(() => isAdmin(email))
+      .then((ok) => {
+        if (live) setAllowed(ok);
+      });
     return () => {
       live = false;
     };

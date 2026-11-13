@@ -87,22 +87,39 @@ export async function loadRegistrations(): Promise<Registration[]> {
   });
 }
 
-/* Keeps the team's public status record in step with the committee's decision. */
-export async function reviewRegistration(row: Registration, patch: { status?: Status; adminNote?: string }): Promise<void> {
-  const batch = writeBatch(store());
+export const errorCode = (err: unknown) => String((err as { code?: string })?.code ?? 'unknown').replace(/^firestore\//, '');
+
+/*
+ * Saves the committee's decision on the registration itself, then
+ * updates the small public record the team uses to check its status.
+ * The second step is separate so that a problem there can never stop
+ * a registration from being verified. Returns false if only the second
+ * step failed.
+ */
+export async function reviewRegistration(row: Registration, patch: { status?: Status; adminNote?: string }): Promise<boolean> {
   const update: Record<string, unknown> = {};
   if (patch.adminNote !== undefined) update.adminNote = patch.adminNote;
   if (patch.status) {
     update.status = patch.status;
     update.reviewedAt = patch.status === 'pending' ? null : serverTimestamp();
-    batch.set(
-      doc(store(), 'registrationStatus', statusId(row.code, row.leaderEmail)),
-      { code: row.code, teamName: row.teamName, status: patch.status },
-      { merge: true },
-    );
   }
-  batch.update(doc(store(), 'registrations', row.code), update);
-  await batch.commit();
+  await updateDoc(doc(store(), 'registrations', row.code), update);
+  if (!patch.status) return true;
+  try {
+    await updateDoc(doc(store(), 'registrationStatus', statusId(row.code, row.leaderEmail)), { status: patch.status });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/* Makes sure the sign-in token carries the latest "email confirmed" flag. */
+export async function refreshToken(): Promise<void> {
+  try {
+    await auth?.currentUser?.getIdToken(true);
+  } catch {
+    /* offline: the existing token is used */
+  }
 }
 
 export async function deleteRegistration(row: Registration): Promise<void> {
